@@ -22,6 +22,9 @@ class Math:
     def w_to_lw(w):
         return 10 * log10((w / Constants.W0))
 
+    def lw_to_w(lw):
+        return pow(10, (lw / 10) + log10(Constants.W0))
+
     def li_to_i(li):
         return pow(10, (li / 10) + log10(Constants.I0))
 
