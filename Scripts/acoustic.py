@@ -1,6 +1,6 @@
 # script with some most used constants and math operations in my acoustic calculations
 from aenum import Constant
-from math import  log10, pow, sqrt
+from math import  log10, pow, sqrt, pi
 
 
 def ans(num, value):
@@ -18,6 +18,12 @@ class Constants(Constant):
 
 
 class Math:
+
+    def lp_sum(lp1, lp2):
+        return 10 * log10(pow(10, (lp1 / 10)) + pow(10, (lp2 / 10)))
+
+    def lr(r):
+        return 10 * log10((4 * pi * pow(r, 2)))
 
     def w_to_lw(w):
         return 10 * log10((w / Constants.W0))
