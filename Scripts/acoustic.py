@@ -15,9 +15,12 @@ class Constants(Constant):
     P0 = 2 * pow(10, -5)
     W0 = pow(10, -12)
     I0 = pow(10, -12)
-
+    c = 343
 
 class Math:
+
+    def k(f):
+        return (2 * pi * f) / Constants.c
 
     def lp_sum(lp1, lp2):
         return 10 * log10(pow(10, (lp1 / 10)) + pow(10, (lp2 / 10)))
