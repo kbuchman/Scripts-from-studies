@@ -2,16 +2,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def sinewave(amp, freq, freq_s, t_start, t_end):
+    '''
+    Return an array with values of a sinewave waveform and display it on a plot.
+    '''
+
     # preparing timelines
-    t = np.arange(t_start, t_end, (1 / freq_s))
-    t44100 = np.arange(t_start, t_end, (1 / 44100))
+    _freq_c = 44100 if 44100 > freq_s else freq_s * 2
+    t = np.linspace(t_start, 
+                    t_end, 
+                    round((abs(t_start) + abs(t_end)) * freq_s) + 1)
+    t_c = np.linspace(t_start, 
+                      t_end, 
+                      round((abs(t_start) + abs(t_end)) * _freq_c) + 1)
+
+    # timelines without endpoint
+    #t = np.arange(t_start, t_end, (1 / freq_s))
+    #t_c = np.arange(t_start, t_end, (1 / _freq_c))
 
     # generating waveforms
     wave = amp * np.sin(2 * np.pi * freq * t)
-    wave44100 = amp * np.sin(2 * np.pi * freq * t44100)
+    wave_c = amp * np.sin(2 * np.pi * freq * t_c)
     
     # plotting
-    plt.plot(t, wave, 'ro',  t44100, wave44100, 'b')
+    plt.plot(t, wave, 'ro',  t_c, wave_c, 'b')
     plt.title(f'Sine function (amount of periods: {(abs(t_start) + abs(t_end)) / (1 / freq)})')
     plt.xlabel('Time, s')
     plt.ylabel('Value')
