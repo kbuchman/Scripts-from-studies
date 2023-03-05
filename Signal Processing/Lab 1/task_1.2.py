@@ -1,23 +1,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+def arange(t_start, t_end, step):
+    ar = np.arange(t_start, t_end, step)
+    return np.append(ar, ar[-1] + step) if ar[-1] < t_end else ar
+
 def sinewave(amp, freq, freq_s, t_start, t_end):
     '''
-    Return an array with values of a sinewave waveform and display it on a plot.
+    Returns an array with values of a sinewave waveform and displays it on a plot.
     '''
 
     # preparing timelines
     _freq_c = 44100 if 44100 > freq_s else freq_s * 2
-    t = np.linspace(t_start, 
-                    t_end, 
-                    round((abs(t_start) + abs(t_end)) * freq_s) + 1)
-    t_c = np.linspace(t_start, 
-                      t_end, 
-                      round((abs(t_start) + abs(t_end)) * _freq_c) + 1)
 
-    # timelines without endpoint
-    #t = np.arange(t_start, t_end, (1 / freq_s))
-    #t_c = np.arange(t_start, t_end, (1 / _freq_c))
+    t = arange(t_start, t_end, (1 / freq_s))
+    t_c = arange(t_start, t_end, (1 / _freq_c))
 
     # generating waveforms
     wave = amp * np.sin(2 * np.pi * freq * t)
