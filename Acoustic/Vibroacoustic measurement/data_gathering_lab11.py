@@ -1,11 +1,9 @@
 # gathering specific data from very messy text files
+# and exporting acquired data into cvs files
 from pandas import DataFrame
 
 
-PATH = "filepath"
-
-
-def read_txt_file(path):
+def read_txt_file(path: str):
     file = []
     with open(path) as f:
         [file.append(l) for l in f] 
@@ -76,4 +74,16 @@ def save_data_to_file(df: DataFrame, path: str):
     df.to_csv(path, "\t", index=False)
 
 
-save_data_to_file(gather_t20_data(read_txt_file(PATH)), f"test.csv")
+def main():
+    src_path = ""  # data filepath
+    des_path = ".csv"  # path to place to save acquired data (it must end with .csv)
+    t20 = True  # type of data to extract T20/LEQ (it depends on file)
+
+    if t20:
+        save_data_to_file(gather_t20_data(read_txt_file(src_path)), des_path)
+    else:
+        save_data_to_file(gather_leq_data(read_txt_file(src_path)), des_path)
+
+
+if __name__ == '__main__':
+    main()
