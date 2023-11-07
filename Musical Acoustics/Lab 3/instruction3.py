@@ -25,25 +25,25 @@ while (acord_sorted_rum.Status.value_counts().get(0, 0) != 0):
     max_freq_idx = acord_sorted_rum.loc[acord_sorted_rum.Amplitude == max, 'Amplitude'].index[0]
     peaks_count += 1
     max_freq = acord_sorted_rum.loc[max_freq_idx, 'Frequency']
-    acord_sorted_rum.loc[max_freq_idx, 'Status'] = '1'
+    acord_sorted_rum.loc[max_freq_idx, 'Status'] = 1
 
     idx = max_freq_idx - 1 
     if max_freq_idx - 1 < 0:
         continue
     current_freq = acord_sorted_rum.loc[idx, 'Frequency']
     while (idx >= 0 and max_freq - current_freq < 15):
-        acord_sorted_rum.loc[idx, 'Status'] = '2'
+        acord_sorted_rum.loc[idx, 'Status'] = 2
         current_freq = acord_sorted_rum.loc[idx, 'Frequency']
         idx -= 1
 
     idx = max_freq_idx + 1
     current_freq = acord_sorted_rum.loc[idx, 'Frequency']
     while (idx <= len(acord_sorted_rum) and current_freq - max_freq < 15):
-        acord_sorted_rum.loc[idx, 'Status'] = '2'
+        acord_sorted_rum.loc[idx, 'Status'] = 2
         current_freq = acord_sorted_rum.loc[idx, 'Frequency']
         idx += 1
 
-    print(acord_sorted_rum.Status.count())
+    print(acord_sorted_rum.Status.value_counts())
 
 
 acord_sorted_har = acord_sorted.copy()
@@ -54,25 +54,25 @@ while (acord_sorted_har.Status.value_counts().get(0, 0) != 0):
     max_freq_idx = acord_sorted_har.loc[acord_sorted_har.Amplitude == max, 'Amplitude'].index[0]
     peaks_count += 1
     max_freq = acord_sorted_har.loc[max_freq_idx, 'Frequency']
-    acord_sorted_har.loc[max_freq_idx, 'Status'] = '1'
+    acord_sorted_har.loc[max_freq_idx, 'Status'] = 1
 
     idx = max_freq_idx - 1 
     if max_freq_idx - 1 < 0:
         continue
     current_freq = acord_sorted_har.loc[idx, 'Frequency']
     while (idx >= 0 and max_freq - current_freq < 11):
-        acord_sorted_har.loc[idx, 'Status'] = '2'
+        acord_sorted_har.loc[idx, 'Status'] = 2
         current_freq = acord_sorted_har.loc[idx, 'Frequency']
         idx -= 1
 
     idx = max_freq_idx + 1
     current_freq = acord_sorted_har.loc[idx, 'Frequency']
     while (idx <= len(acord_sorted_har) and current_freq - max_freq < (24.7 * ((4.73 * current_freq) + 1))):
-        acord_sorted_har.loc[idx, 'Status'] = '2'
+        acord_sorted_har.loc[idx, 'Status'] = 2
         current_freq = acord_sorted_har.loc[idx, 'Frequency']
         idx += 1
 
-    print(acord_sorted_har.Status.count())
+    print(acord_sorted_har.Status.value_counts())
 
 
 acord_sorted_all = acord_sorted.copy()
@@ -83,21 +83,21 @@ while (acord_sorted_all.Status.value_counts().get(0, 0) != 0):
     max_freq_idx = acord_sorted_all.loc[acord_sorted_all.Amplitude == max, 'Amplitude'].index[0]
     peaks_count += 1
     max_freq = acord_sorted_all.loc[max_freq_idx, 'Frequency']
-    acord_sorted_all.loc[max_freq_idx, 'Status'] = '1'
+    acord_sorted_all.loc[max_freq_idx, 'Status'] = 1
 
     idx = max_freq_idx - 1 
     if max_freq_idx - 1 < 0:
         continue
     current_freq = acord_sorted_all.loc[idx, 'Frequency']
     while (idx >= 0 and max_freq - current_freq < 15):
-        acord_sorted_all.loc[idx, 'Status'] = '2'
+        acord_sorted_all.loc[idx, 'Status'] = 2
         current_freq = acord_sorted_all.loc[idx, 'Frequency']
         idx -= 1
 
     idx = max_freq_idx + 1
     current_freq = acord_sorted_all.loc[idx, 'Frequency']
     while (idx <= len(acord_sorted_all) and current_freq - max_freq < 15):
-        acord_sorted_all.loc[idx, 'Status'] = '2'
+        acord_sorted_all.loc[idx, 'Status'] = 2
         current_freq = acord_sorted_all.loc[idx, 'Frequency']
         idx += 1
 
@@ -117,7 +117,7 @@ while (acord_sorted_all.Status.value_counts().get(0, 0) != 0):
         current_freq = acord_sorted_all.loc[idx, 'Frequency']
         idx += 1
 
-    print(acord_sorted_all.Status.count())
+    print(acord_sorted_all.Status.value_counts())
 
 
 print('Where: 1 - leave, 2 - remove')
