@@ -106,14 +106,14 @@ while (acord_sorted_all.Status.value_counts().get(0, 0) != 0):
         continue
     current_freq = acord_sorted_all.loc[idx, 'Frequency']
     while (idx >= 0 and max_freq - current_freq < 11):
-        acord_sorted_all.loc[idx, 'Status'] = '2'
+        acord_sorted_all.loc[idx, 'Status'] = 2
         current_freq = acord_sorted_all.loc[idx, 'Frequency']
         idx -= 1
 
     idx = max_freq_idx + 1
     current_freq = acord_sorted_all.loc[idx, 'Frequency']
     while (idx <= len(acord_sorted_all) and current_freq - max_freq < (24.7 * ((4.73 * current_freq / 1000) + 1))):
-        acord_sorted_all.loc[idx, 'Status'] = '2'
+        acord_sorted_all.loc[idx, 'Status'] = 2
         current_freq = acord_sorted_all.loc[idx, 'Frequency']
         idx += 1
 
@@ -123,17 +123,17 @@ print('Group: Karol Buchman and Paweł Procki')
 print('Where: 1 - leave, 2 - remove')
 print('Signal after clearing rumbles:')
 print(acord_sorted_rum['Status'].value_counts())
-acord_sorted_rum.loc[2, 'Status'] = 0
+acord_sorted_rum['Amplitude'].mask(acord_sorted_rum['Status'] == 2, 0, inplace=True)
 amp_rum_sum = acord_sorted_rum['Amplitude'].sum()
 
 print('Signal after clearing harshness:')
 print(acord_sorted_har['Status'].value_counts())
-acord_sorted_har.loc[2, 'Status'] = 0
+acord_sorted_har['Amplitude'].mask(acord_sorted_har['Status'] == 2, 0, inplace=True)
 amp_har_sum = acord_sorted_har['Amplitude'].sum()
 
 print('Signal after clearing both:')
 print(acord_sorted_all['Status'].value_counts())
-acord_sorted_all.loc[2, 'Status'] = 0
+acord_sorted_all['Amplitude'].mask(acord_sorted_all['Status'] == 2, 0, inplace=True)
 amp_all_sum = acord_sorted_all['Amplitude'].sum()
 
 
