@@ -1,6 +1,6 @@
-import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import wavio
 
 c = pd.read_csv('Musical Acoustics\Lab 3\widmo c.txt', sep='	')
 e = pd.read_csv('Musical Acoustics\Lab 3\widmo e.txt', sep='	')
@@ -13,111 +13,51 @@ for df in all_sounds:
 
 acord = pd.concat(all_sounds).reset_index(drop=True)
 
-acord_sorted = acord.sort_values('Frequency')
+acord['Index'] = acord.index
+acord_sorted = acord.sort_values('Frequency', ascending=False)
 acord_sorted['Status'] = 0
 amp_sum = acord_sorted['Amplitude'].sum()
 
 acord_sorted_rum = acord_sorted.copy()
-peaks_count = 1
 
-while (acord_sorted_rum.Status.value_counts().get(0, 0) != 0):
-    max = acord_sorted_rum['Amplitude'].nlargest(peaks_count).min()
-    max_freq_idx = acord_sorted_rum.loc[acord_sorted_rum.Amplitude == max, 'Amplitude'].index[0]
-    peaks_count += 1
-    max_freq = acord_sorted_rum.loc[max_freq_idx, 'Frequency']
-    acord_sorted_rum.loc[max_freq_idx, 'Status'] = 1
-
-    idx = max_freq_idx - 1 
-    if max_freq_idx - 1 < 0:
+last_peak_freq = acord_sorted_rum.Frequency[0] + 16
+for i, freq in enumerate(acord_sorted_rum.Frequency):
+    if abs(last_peak_freq - freq) > 15:
+        last_peak_freq = freq
+        acord_sorted_rum.Status[i] = 1
         continue
-    current_freq = acord_sorted_rum.loc[idx, 'Frequency']
-    while (idx >= 0 and max_freq - current_freq < 15):
-        acord_sorted_rum.loc[idx, 'Status'] = 2
-        current_freq = acord_sorted_rum.loc[idx, 'Frequency']
-        idx -= 1
-
-    idx = max_freq_idx + 1
-    current_freq = acord_sorted_rum.loc[idx, 'Frequency']
-    while (idx <= len(acord_sorted_rum) and current_freq - max_freq < 15):
-        acord_sorted_rum.loc[idx, 'Status'] = 2
-        current_freq = acord_sorted_rum.loc[idx, 'Frequency']
-        idx += 1
-
-    print(acord_sorted_rum.Status.value_counts())
+    acord_sorted_rum.Status[i] = 2
+    #print(acord_sorted_rum.Status.value_counts())
 
 
-acord_sorted_har = acord_sorted.copy()
-peaks_count = 1
+acord_sorted_har = acord_sorted.copy()                  
 
-while (acord_sorted_har.Status.value_counts().get(0, 0) != 0):
-    max = acord_sorted_har['Amplitude'].nlargest(peaks_count).min()
-    max_freq_idx = acord_sorted_har.loc[acord_sorted_har.Amplitude == max, 'Amplitude'].index[0]
-    peaks_count += 1
-    max_freq = acord_sorted_har.loc[max_freq_idx, 'Frequency']
-    acord_sorted_har.loc[max_freq_idx, 'Status'] = 1
+last_peak_freq = acord_sorted_har.Frequency[0] + 11
+for i, freq in enumerate(acord_sorted_har.Frequency):
+    if abs(last_peak_freq - freq) >= 11:
+        erb = .25 * 24.7 * ((4.37 * last_peak_freq * 1000) + 1)
+        acord_sorted_har.Status[i] = 2
 
-    idx = max_freq_idx - 1 
-    if max_freq_idx - 1 < 0:
+        if abs(last_peak_freq - freq) < erb:
+            last_peak_freq = freq
+            continue
+    acord_sorted_har.Status[i] = 1
+    #print(acord_sorted_har.Status.value_counts())
+
+
+acord_sorted_all = acord_sorted_har.copy()
+acord_sorted_all['Amplitude'].mask(acord_sorted_all['Status'] == 2, 0, inplace=True)
+acord_sorted_all.Status[:] = 0
+
+last_peak_freq = acord_sorted_all.Frequency[0] + 16
+for i, freq in enumerate(acord_sorted_all.Frequency):
+    if abs(last_peak_freq - freq) > 15:
+        last_peak_freq = freq
+        acord_sorted_all.Status[i] = 1
         continue
-    current_freq = acord_sorted_har.loc[idx, 'Frequency']
-    while (idx >= 0 and max_freq - current_freq < 11):
-        acord_sorted_har.loc[idx, 'Status'] = 2
-        current_freq = acord_sorted_har.loc[idx, 'Frequency']
-        idx -= 1
+    acord_sorted_all.Status[i] = 2
 
-    idx = max_freq_idx + 1
-    current_freq = acord_sorted_har.loc[idx, 'Frequency']
-    while (idx <= len(acord_sorted_har) and current_freq - max_freq < (24.7 * ((4.73 * current_freq / 1000) + 1))):
-        acord_sorted_har.loc[idx, 'Status'] = 2
-        current_freq = acord_sorted_har.loc[idx, 'Frequency']
-        idx += 1
-
-    print(acord_sorted_har.Status.value_counts())
-
-
-acord_sorted_all = acord_sorted.copy()
-peaks_count = 1
-
-while (acord_sorted_all.Status.value_counts().get(0, 0) != 0):
-    max = acord_sorted_all['Amplitude'].nlargest(peaks_count).min()
-    max_freq_idx = acord_sorted_all.loc[acord_sorted_all.Amplitude == max, 'Amplitude'].index[0]
-    peaks_count += 1
-    max_freq = acord_sorted_all.loc[max_freq_idx, 'Frequency']
-    acord_sorted_all.loc[max_freq_idx, 'Status'] = 1
-
-    idx = max_freq_idx - 1 
-    if max_freq_idx - 1 < 0:
-        continue
-    current_freq = acord_sorted_all.loc[idx, 'Frequency']
-    while (idx >= 0 and max_freq - current_freq < 15):
-        acord_sorted_all.loc[idx, 'Status'] = 2
-        current_freq = acord_sorted_all.loc[idx, 'Frequency']
-        idx -= 1
-
-    idx = max_freq_idx + 1
-    current_freq = acord_sorted_all.loc[idx, 'Frequency']
-    while (idx <= len(acord_sorted_all) and current_freq - max_freq < 15):
-        acord_sorted_all.loc[idx, 'Status'] = 2
-        current_freq = acord_sorted_all.loc[idx, 'Frequency']
-        idx += 1
-
-    idx = max_freq_idx - 1 
-    if max_freq_idx - 1 < 0:
-        continue
-    current_freq = acord_sorted_all.loc[idx, 'Frequency']
-    while (idx >= 0 and max_freq - current_freq < 11):
-        acord_sorted_all.loc[idx, 'Status'] = 2
-        current_freq = acord_sorted_all.loc[idx, 'Frequency']
-        idx -= 1
-
-    idx = max_freq_idx + 1
-    current_freq = acord_sorted_all.loc[idx, 'Frequency']
-    while (idx <= len(acord_sorted_all) and current_freq - max_freq < (24.7 * ((4.73 * current_freq / 1000) + 1))):
-        acord_sorted_all.loc[idx, 'Status'] = 2
-        current_freq = acord_sorted_all.loc[idx, 'Frequency']
-        idx += 1
-
-    print(acord_sorted_all.Status.value_counts())
+print(acord_sorted_all.Status.value_counts())
 
 print('Group: Karol Buchman and Paweł Procki')
 print('Where: 1 - leave, 2 - remove')
@@ -137,6 +77,16 @@ acord_sorted_all['Amplitude'].mask(acord_sorted_all['Status'] == 2, 0, inplace=T
 amp_all_sum = acord_sorted_all['Amplitude'].sum()
 
 
-print(f'Rumbles = {round((amp_rum_sum / amp_sum) * 100, 2)}%')
-print(f'Harshness = {round((amp_har_sum / amp_sum) * 100, 2)}%')
-print(f'Both = {round((amp_all_sum / amp_sum) * 100, 2)}%')
+print(f'Rumbles = {round((1 - amp_rum_sum / amp_sum) * 100, 2)}%')
+print(f'Harshness = {round((1 - amp_har_sum / amp_sum) * 100, 2)}%')
+print(f'Both = {round((1 - amp_all_sum / amp_sum) * 100, 2)}%')
+
+fs = 44100
+
+acord_sorted_rum = acord_sorted_rum.sort_values('Index')
+acord_sorted_har = acord_sorted_har.sort_values('Index')
+acord_sorted_all = acord_sorted_all.sort_values('Index')
+
+wavio.write("without_rumbles.wav", acord_sorted_rum.Amplitude, fs, sampwidth=3)
+wavio.write("without_harshness.wav", acord_sorted_har.Amplitude, fs, sampwidth=3)
+wavio.write("without_both.wav", acord_sorted_all.Amplitude, fs, sampwidth=3)
