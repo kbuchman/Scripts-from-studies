@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import wavio
+import librosa
 
 c = pd.read_csv('Musical Acoustics\Lab 3\widmo c.txt', sep='	')
 e = pd.read_csv('Musical Acoustics\Lab 3\widmo e.txt', sep='	')
@@ -20,14 +21,16 @@ amp_sum = acord_sorted['Amplitude'].sum()
 
 acord_sorted_rum = acord_sorted.copy()
 
-last_peak_freq = acord_sorted_rum.Frequency[0] + 16
+last_peak_freq = acord_sorted_rum.Frequency[acord_sorted_rum.Amplitude.idxmax()]
 for i, freq in enumerate(acord_sorted_rum.Frequency):
-    if abs(last_peak_freq - freq) > 15:
+    if freq - last_peak_freq > 15:
         last_peak_freq = freq
         acord_sorted_rum.Status[i] = 1
         continue
+    elif  freq - last_peak_freq < 0:
+        acord_sorted_rum.Status[i] = 1
+        continue
     acord_sorted_rum.Status[i] = 2
-    #print(acord_sorted_rum.Status.value_counts())
 
 
 acord_sorted_har = acord_sorted.copy()                  
@@ -81,12 +84,23 @@ print(f'Rumbles = {round((1 - amp_rum_sum / amp_sum) * 100, 2)}%')
 print(f'Harshness = {round((1 - amp_har_sum / amp_sum) * 100, 2)}%')
 print(f'Both = {round((1 - amp_all_sum / amp_sum) * 100, 2)}%')
 
-fs = 44100
+y, fs = librosa.load(r'Musical Acoustics\Lab 3\akord.wav')
+duration = librosa.get_duration(y=y, sr=fs)
+
+
+def generate_audio(frequencies, amplitudes, duration, sample_rate):
+    time = np.arange(0, duration, 1 / sample_rate)
+    audio_signal = np.zeros_like(time)
+
+    for freq, amp in zip(frequencies, amplitudes):
+        audio_signal += amp * np.sin(2 * np.pi * freq * time)
+
+    return audio_signal
 
 acord_sorted_rum = acord_sorted_rum.sort_values('Index')
 acord_sorted_har = acord_sorted_har.sort_values('Index')
 acord_sorted_all = acord_sorted_all.sort_values('Index')
 
-wavio.write("without_rumbles.wav", acord_sorted_rum.Amplitude, fs, sampwidth=3)
-wavio.write("without_harshness.wav", acord_sorted_har.Amplitude, fs, sampwidth=3)
-wavio.write("without_both.wav", acord_sorted_all.Amplitude, fs, sampwidth=3)
+wavio.write("without_rumbles.wav", generate_audio(acord_sorted_rum.Frequency, acord_sorted_rum.Amplitude, duration, fs), fs, sampwidth=3)
+wavio.write("without_harshness.wav", generate_audio(acord_sorted_har.Frequency, acord_sorted_har.Amplitude, duration, fs), fs, sampwidth=3)
+wavio.write("without_both.wav", generate_audio(acord_sorted_all.Frequency, acord_sorted_all.Amplitude, duration, fs), fs, sampwidth=3)
